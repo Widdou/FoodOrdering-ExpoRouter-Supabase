@@ -5,7 +5,11 @@
 ## Concepts to hightlight:
 - Multi-Stack Navigation
   - Having a Tab Navigation contain a Stack Navigation that keeps persistency.
-- React Context to share the application's state (Cart)
+  - Customizing the Header Tab with functionality - (HeaderRight property) `1:37:56`
+  - Presentation Mode. Go to a different screen like a modal, slide, etc `1:39:18`
+
+- React Context to share the application's state across components. (Shopping Cart)
+- Using Modals
 - Implementing an Admin view
 - Supabase CRUDs
 - Real-Time Data

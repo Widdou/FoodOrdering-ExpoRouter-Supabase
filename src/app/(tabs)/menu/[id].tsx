@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams } from 'expo-router'
 import { StyleSheet, Text, View, Image } from 'react-native'
 
 import products from 'assets/data/products'
@@ -14,8 +14,9 @@ export default function ProductsDetailsScreen() {
 
   return (
     <View>
-      <Text>ProductsDetailsScreen - {id}</Text>
+      <Stack.Screen options={{title: 'Details: '+id}}/>
 
+      <Text>ProductsDetailsScreen - {id}</Text>
       
       <Image source={{uri: product.image || defaultPizzaImage}} style={styles.image}/>
 

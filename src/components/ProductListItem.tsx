@@ -11,7 +11,7 @@ export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaw
 
 const ProductListItem = ({product} : ProductListItemProps) => {
   return (
-    <Link href={`/product/${product.id}`} asChild>
+    <Link href={`/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
         <Image source={{uri: product.image || defaultPizzaImage}} style={styles.image}/>
 

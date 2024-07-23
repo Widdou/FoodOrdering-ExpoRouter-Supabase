@@ -3,10 +3,17 @@ import { StatusBar } from 'expo-status-bar'
 import { useCart } from '@/providers/CartProvider'
 import CartListItem from '@/components/CartListItem'
 import Button from '@/components/Button'
+import { router } from 'expo-router'
 
 export default function CartScreen() {
 
-  const {items, addItem} = useCart()
+  const {items, total} = useCart()
+
+  // Don't open cart if empty
+  if(items.length == 0) {
+    router.back() 
+    return
+  }
 
   return (
     <SafeAreaView style={{backgroundColor: 'ivory', flex: 1}}>
@@ -25,9 +32,9 @@ export default function CartScreen() {
 
       <View style={{position: 'absolute', bottom: 0, padding: 20, width: '100%', borderColor: 'orange', borderStyle: 'solid', borderTopWidth: 1}}>
         
-        <Button text='Order'/>
+        <Text style={{fontSize: 24, fontWeight: 600,}}>Total: $ {Math.ceil(total)}</Text>
+        <Button text='Checkout'/>
 
-        <Text style={{fontSize: 24, fontWeight: 600,}}>Total: </Text>
       </View>
 
 

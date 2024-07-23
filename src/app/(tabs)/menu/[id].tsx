@@ -5,22 +5,29 @@ import products from 'assets/data/products'
 import { useState } from 'react'
 
 import Button from '@/components/Button'
+import { PizzaSize } from '@/types'
+import { useCart } from '@/providers/CartProvider'
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
-const sizes = ['S', 'M', 'L', 'XL']
+const sizes : PizzaSize[] = ['S', 'M', 'L', 'XL']
 const priceModifier = [.8, 1, 1.2, 1.3]
 
 export default function ProductsDetailsScreen() {
 
-  const [selectedSize, setSelectedSize] = useState('M')
+  const {addItem} = useCart()
+
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M')
 
   const {id} = useLocalSearchParams()
 
   const product = products.find((p) => p.id.toString() === id)
 
   const addToCart = () => {
-    console.warn('Adding to cart, size: ', selectedSize)
+    if(!product) return
+    
+    addItem(product!, selectedSize)
+    router.push('/cart')
   }
 
   if(!product) {

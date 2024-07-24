@@ -30,6 +30,42 @@ Having a Task Board on Notion to break down the tasks on each domain phase (Fron
 
 -------------------------------------------------------------------------------
 
+Expo Image Picker
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+# Nice Tricks:
+
+### Dismiss Keyboard easily
+
+```JavaScript
+// Create a Component to wrap the Screen/App, when pressed it will close any keyboard
+const DismissKeyboard = ({ children } : PropsWithChildren) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+  );
+
+```
+
+Applying it this way would allow to not handle the behaviour on each InputText with:
+```JavaScript 
+onBlur={() => Keyboard.dismiss()}
+```
+
+```The easiest way is to just wrap the view as a ViewScroll```
+
+```JavaScript
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        ...children
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+```
 
 
 

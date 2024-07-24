@@ -1,4 +1,4 @@
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { Link, router, Stack, useLocalSearchParams } from 'expo-router'
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 
 import products from 'assets/data/products'
@@ -7,6 +7,7 @@ import { useState } from 'react'
 import Button from '@/components/Button'
 import { PizzaSize } from '@/types'
 import { useCart } from '@/providers/CartProvider'
+import { FontAwesome } from '@expo/vector-icons'
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -25,7 +26,24 @@ export default function ProductsDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{title: product.name}}/>
+      {/* <Stack.Screen options={{title: product.name}}/> */}
+      <Stack.Screen options={{
+          title: product.name,
+          headerRight: () => (
+            <Link href={`/(admin)/menu/create?id=${product.id}`} asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name='pencil'
+                    size={25}
+                    color='white'
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1}}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+      }}/>
       
       <Image source={{uri: product?.image || defaultPizzaImage}} style={styles.image}/>
 

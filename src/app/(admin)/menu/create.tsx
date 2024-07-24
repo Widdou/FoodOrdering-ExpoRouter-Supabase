@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, TextInput, Image, 
   Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView, Platform,
+  Alert,
 } from 'react-native'
 import React, { PropsWithChildren, useState } from 'react'
 import Button from '@/components/Button'
-import { Stack } from 'expo-router'
+import { Stack, useLocalSearchParams } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker'
 
 import { defaultPizzaImage } from './[id]'
@@ -13,23 +14,56 @@ export default function CreateProductScreen() {
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
+  const [errors, setErrors] = useState('')
   const [image, setImage] = useState<string | null>(null)
 
-  const [errors, setErrors] = useState('')
+  const { id } = useLocalSearchParams()
+  const isUpdating = !!id
 
   const resetFields = () => {
     setName('')
     setPrice('')
   }
 
-  const onCreate = () => {
-    if(!validateInput()) {
-      return false
-    }
-    
+  const onCreate = () => {    
     console.warn('Creating Product...', name, price)
     // Save in Database
 
+  }
+
+  const onUpdate = () => {
+    console.warn('Updating Product...', name, price)
+    // Save in Database
+
+  }
+
+  const confirmDelete = () => {
+    Alert.alert('Confirm', 'Are you sure you want to delete this product?', [
+      {
+        text: 'Cancel'
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: onDelete,
+      }
+    ])
+  }
+
+  const onDelete = () => {
+    console.warn('DELETE!!!')
+  }
+
+  const onSubmit = () => {
+
+    if(!validateInput()) return false
+
+    if(isUpdating) {
+      onUpdate()
+    } else {
+      onCreate()
+    }
+    
     resetFields()
   }
 
@@ -76,7 +110,10 @@ export default function CreateProductScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
         <View style={styles.innertContent}>
-        <Stack.Screen options={{title: 'Create New Product'}}/>
+        <Stack.Screen options={{
+          title: isUpdating ? 'Edit Product Details' : 'Create New Product',
+          headerBackTitle: 'Back'
+        }}/>
 
         <Image source={{uri: image || defaultPizzaImage}} style={styles.image}/>
         <Text onPress={pickImageAsync} style={styles.textBottom}>Select Image</Text>
@@ -100,7 +137,8 @@ export default function CreateProductScreen() {
 
         <Text style={{color: 'red'}}>{errors}</Text>
 
-        <Button text='Create' onPress={onCreate}/>
+        <Button text={isUpdating ? 'Update' : 'Create'} onPress={onCreate}/>
+        {isUpdating && <Text style={styles.textBottom} onPress={confirmDelete}>Delete Product</Text>}
         </View>
 
       </TouchableWithoutFeedback>

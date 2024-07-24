@@ -27,23 +27,6 @@ export default function MenuLayout() {
             </Link>
           ),
       }}/>
-      
-      <Stack.Screen name="[id]" options={{
-          headerRight: () => (
-            <Link href="/" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name='pencil'
-                    size={25}
-                    color='white'
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1}}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-      }}/>
 
       {/* <StatusBar style="auto" /> */}
     </Stack>

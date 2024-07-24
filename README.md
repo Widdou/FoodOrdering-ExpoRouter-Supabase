@@ -10,7 +10,11 @@
 
 - React Context to share the application's state across components. (Shopping Cart)
 - Using Modals
+
 - Implementing an Admin view
+  - Routing segments URL of the application to their correct screens `2:23:53`
+  - Providing management functionality to the admin screens
+
 - Supabase CRUDs
 - Real-Time Data
 - Payment integration (Stripe)

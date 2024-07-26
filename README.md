@@ -27,6 +27,9 @@ Having a Task Board on Notion to break down the tasks on each domain phase (Fron
 
 [Task Board](https://notjust.notion.site/React-Native-Supabase-Masterclass-47a69a60bc464c399b5a0df4d3c4a630?p=443eaa467dbb47a1b42c2fa8a2d72268&pm=s)
 
+### Dependencies:
+- Expo Crypto
+- [Day.js (Relative Time)](https://day.js.org/docs/en/plugin/relative-time)
 
 -------------------------------------------------------------------------------
 

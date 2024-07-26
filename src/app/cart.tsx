@@ -4,10 +4,12 @@ import { useCart } from '@/providers/CartProvider'
 import CartListItem from '@/components/CartListItem'
 import Button from '@/components/Button'
 import { router } from 'expo-router'
+import { useOrders } from '@/providers/OrderProvider'
 
 export default function CartScreen() {
 
   const {items, total} = useCart()
+  const {createOrder, addOrder} = useOrders()
 
   // Don't open cart if empty
   if(items.length == 0) {
@@ -33,7 +35,7 @@ export default function CartScreen() {
       <View style={{position: 'absolute', bottom: 0, padding: 20, width: '100%', borderColor: 'orange', borderStyle: 'solid', borderTopWidth: 1}}>
         
         <Text style={{fontSize: 24, fontWeight: 600,}}>Total: $ {Math.ceil(total)}</Text>
-        <Button text='Checkout'/>
+        <Button text='Checkout' onPress={() => createOrder(1)}/>
 
       </View>
 

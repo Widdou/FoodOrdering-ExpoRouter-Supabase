@@ -1,7 +1,7 @@
 import { View, Text, TextInput, ScrollView, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 
-import LoginForm from './LoginForm'
+import LoginForm from '@/components/LoginForm'
 import { Stack } from 'expo-router'
 
 export default function SignInScreen() {

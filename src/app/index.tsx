@@ -7,7 +7,7 @@ const index = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 10, }}>
 
-      <Link href={'/(auth)/signin'} asChild>
+      <Link href={'/(auth)/sign-in'} asChild>
         <Button text="Login & SignUp" />
       </Link>
 

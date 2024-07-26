@@ -1,4 +1,4 @@
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Image, Pressable } from 'react-native'
 import React from 'react'
 
 import OrderItemListItem from '@/components/OrderItemListItem';
@@ -6,6 +6,8 @@ import OrderListItem from '@/components/OrderListItem';
 
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useOrders } from '@/providers/OrderProvider'
+import { Order, OrderStatusList } from '@/types';
+import Colors from '@/constants/Colors';
 
 type OrderDetailsScreenParams = {
   id: string
@@ -37,6 +39,7 @@ export default function OrderDetailsScreen() {
         data={order.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
+        ListFooterComponent={() => <OrdersStatusButtons order={order}/>}
       />
     </View>
   )
@@ -50,3 +53,42 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 })
+
+type OrdersStatusButtonsProps = {
+  order : Order
+}
+
+const OrdersStatusButtons = ({order} : OrdersStatusButtonsProps) => {
+  return <>
+  <Text style={{ fontWeight: 'bold' }}>Status</Text>
+  <View style={{ flexDirection: 'row', gap: 5 }}>
+    {OrderStatusList.map((status) => (
+      <Pressable
+        key={status}
+        onPress={() => console.warn('Update status')}
+        style={{
+          borderColor: Colors.light.tint,
+          borderWidth: 1,
+          padding: 10,
+          borderRadius: 5,
+          marginVertical: 10,
+          backgroundColor:
+            order.status === status
+              ? Colors.light.tint
+              : 'transparent',
+        }}
+      >
+        <Text
+          style={{
+            color:
+              order.status === status ? 'white' : Colors.light.tint,
+          }}
+        >
+          {status}
+        </Text>
+      </Pressable>
+    ))}
+  </View>
+</>
+
+}

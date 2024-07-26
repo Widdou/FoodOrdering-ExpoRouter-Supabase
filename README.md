@@ -47,7 +47,12 @@ Having a Task Board on Notion to break down the tasks on each domain phase (Fron
 ```shell
 npx expo install expo-crypto
 npx expo install dayjs
-npx expo install 
+
+// Top Navigator Material UI
+npm install @react-navigation/material-top-tabs react-native-tab-view
+npx expo install react-native-pager-view
+
+
 npx expo install react-query
 ```
 
@@ -61,6 +66,32 @@ Expo Image Picker
 # Frontend - Expo
 
 # Nice Tricks:
+
+### Top Tab Navigator - Material UI
+
+Top have the navigation bars be displayed on top of the screen, this simple implementation allows to have a stack behave in such a way.
+Bonus: Also allows to slide between tabs anywhere on the screen, akin to instagram.
+To-do: Search a way to hide the tabs and keep the slide navigation.
+
+`(screen)/_layout.tsx`
+```JavaScript
+import { withLayoutContext } from "expo-router"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
+import { SafeAreaView } from "react-native-safe-area-context"
+
+const TopTabs = withLayoutContext(createMaterialTopTabNavigator().Navigator)
+
+export default function OrderListNavigator() {
+  return (
+    <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white'}}>
+      <TopTabs>
+        <TopTabs.Screen name='index' options={{title: 'Active'}}/>
+        <TopTabs.Screen name='archive' options={{title: 'Archived'}}/>
+      </TopTabs>
+    </SafeAreaView>
+  )  
+}
+```
 
 ### Dismiss Keyboard easily
 

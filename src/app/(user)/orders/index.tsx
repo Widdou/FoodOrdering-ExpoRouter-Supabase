@@ -8,7 +8,6 @@ import { useOrders } from '@/providers/OrderProvider';
 export default function OrdersScreen() {
 
   const {orders} = useOrders()
-  console.log('Orders: ', orders.length)
 
   if(orders.length == 0) {
     return <View>

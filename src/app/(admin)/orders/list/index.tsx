@@ -8,7 +8,6 @@ import { useOrders } from '@/providers/OrderProvider';
 export default function OrdersScreen() {
 
   const {orders} = useOrders()
-  console.log('Orders: ', orders.length)
 
   if(orders.length == 0) {
     return <View>
@@ -18,13 +17,16 @@ export default function OrdersScreen() {
   
   return (
     <>
-      <Stack.Screen options={{title: 'Orders'}}/>
+      {/* <Stack.Screen options={{title: 'Orders'}}/> */}
 
       <FlatList
         data={orders}
         renderItem={({item}) => <OrderListItem order={item} />}
         contentContainerStyle={{gap: 10, padding: 10}}
+        // ListHeaderComponent={() => }
         />
     </>
   );
 }
+
+// const 

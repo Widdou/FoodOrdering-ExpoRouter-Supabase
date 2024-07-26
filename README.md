@@ -3,6 +3,8 @@
 [Tutorial de Referencia](https://www.youtube.com/watch?v=rIYzLhkG9TA)
 
 ## Concepts to hightlight:
+During the development of the application these would be nice concepts or patterns that were implementated:
+
 - Multi-Stack Navigation
   - Having a Tab Navigation contain a Stack Navigation that keeps persistency.
   - Customizing the Header Tab with functionality - (HeaderRight property) `1:37:56`
@@ -14,8 +16,17 @@
 - Implementing an Admin view
   - Routing segments URL of the application to their correct screens `2:23:53`
   - Providing management functionality to the admin screens
+  - MENU (Tab): List the Products; Provide the screens to EDIT or ADD new ones
+  - ORDERS (Tab): View the Active & Archieved orders; Be able to change the status of the orders `3:26:52`
+
+- Routing the UI into USERS or ADMIN screens based on the UserProfile
+
+
+
 
 - Supabase CRUDs
+  - Use React-Query to handle and fetch data from the backend
+
 - Real-Time Data
 - Payment integration (Stripe)
 - Remote Push Notifications
@@ -30,6 +41,15 @@ Having a Task Board on Notion to break down the tasks on each domain phase (Fron
 ### Dependencies:
 - Expo Crypto
 - [Day.js (Relative Time)](https://day.js.org/docs/en/plugin/relative-time)
+- [Top Navigator Material UI](https://reactnavigation.org/docs/material-top-tab-navigator/) 
+- React Query 
+
+```shell
+npx expo install expo-crypto
+npx expo install dayjs
+npx expo install 
+npx expo install react-query
+```
 
 -------------------------------------------------------------------------------
 

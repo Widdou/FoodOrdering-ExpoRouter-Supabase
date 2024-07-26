@@ -6,8 +6,6 @@ import { Stack } from 'expo-router';
 export default function MenuScreen() {
   return (
     <View>
-      {/* <Stack.Screen options={{title: 'Menu'}}/> */}
-
       <FlatList
         data={products}
         renderItem={({item}) => <ProductListItem product={item}/>}

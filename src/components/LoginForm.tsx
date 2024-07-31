@@ -1,7 +1,11 @@
-import { View, Text, TextInput, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, TextInput, ScrollView, StyleSheet, Alert } from 'react-native'
 import React, { useState } from 'react'
 import Button from '@/components/Button'
 import { Link, router, Stack } from 'expo-router'
+
+
+import { supabase } from '@/lib/supabase'
+
 
 type LoginFormProps = {
   action: 'signin' | 'signup'
@@ -11,7 +15,23 @@ type LoginFormProps = {
 export default function LoginForm({action} : LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
+  async function signUpWithEmail() {
+    setLoading(true)
+    const {error} = await supabase.auth.signUp({email, password})
+
+    if(error) Alert.alert(error.message)
+    setLoading(false)
+  }
+
+  async function signInWithPassword() {
+    setLoading(true)
+    const {error} = await supabase.auth.signInWithPassword({email, password})
+
+    if(error) Alert.alert(error.message)
+    setLoading(false)
+  }
 
   return (
     <View style={styles.container}>
@@ -22,6 +42,7 @@ export default function LoginForm({action} : LoginFormProps) {
           placeholder='example@email.com' 
           value={email}
           onChangeText={setEmail}
+          keyboardType='email-address'
         />
       </View>
       
@@ -30,13 +51,27 @@ export default function LoginForm({action} : LoginFormProps) {
         <TextInput style={styles.input} 
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
         />
       </View>
 
-      {/* <Link href={'/(user)'} asChild> */}
-        <Button text={action == 'signin' ? 'Sign in' : 'Create account'} onPress={() => router.replace('/(user)')}/>
-      {/* </Link> */}
-      <Link href='/(auth)/sign-up'><Text>{action == 'signin' ? 'Create an account' : 'Sign in'}</Text></Link>
+      {action == 'signup' ? 
+        // Sign up screen
+        <>
+          <Button text={loading ? 'Creating account...' : 'Create account'} onPress={() => signUpWithEmail()} disabled={loading}/>
+          <Link href='/(auth)/sign-in'><Text>Sign in</Text></Link>
+        </>
+        : null
+      }
+      
+      {action == 'signin' ? 
+        // Login screen
+        <>
+          <Button text={loading ? 'Singing in...' : 'Sign in'} onPress={() => signInWithPassword()} disabled={loading}/>
+          <Link href='/(auth)/sign-up'><Text>Create an account</Text></Link>
+        </>
+        : null
+      }
 
     </View>
   )

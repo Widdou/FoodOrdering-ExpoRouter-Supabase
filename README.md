@@ -149,7 +149,7 @@ Create a Project in your Supabase organization, and get the API keys:
 URL: `https://sybyzxlremmctfvejcuf.supabase.co`
 AnonKey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5Ynl6eGxyZW1tY3RmdmVqY3VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI0NTA0NjQsImV4cCI6MjAzODAyNjQ2NH0.7GKQXOQwk-VlmxtsRLFoJCYYTGiV7uYpcPBRw6i2Gwo`
 
-This is a safe to have public key since the operations against the backend will be perform on a row-level and user-based role.
+*This is a safe to have public key since the operations against the backend will be perform on a row-level and user-based role.*
 
 Setup a `src/lib/supabase.ts` file to handle the connection between the application and the Supabase backend.
 
@@ -160,7 +160,7 @@ npm install react-native-elements @react-native-async-storage/async-storage reac
 npx expo install expo-secure-store
 ```
 
-
+Set up the database schema based on The **User Management Starter** Template from the SQL Editor
 
 
 -------------------------------------------------------------------------------

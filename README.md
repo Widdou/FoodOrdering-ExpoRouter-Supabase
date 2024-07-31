@@ -133,6 +133,33 @@ onBlur={() => Keyboard.dismiss()}
 
 # Backend - Supabase
 
+Supabase is initially an alternative to Firebase, both are plataforms that provide a Backend as a Service (BaaS)
+
+1. Getting Started
+2. Implementing Authentication System
+3. Designing a Database
+4. Query and Mutate Data
+5. Upload Images
+6. Real-time Updates
+
+## Getting Started
+
+Create a Project in your Supabase organization, and get the API keys:
+
+URL: `https://sybyzxlremmctfvejcuf.supabase.co`
+AnonKey: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5Ynl6eGxyZW1tY3RmdmVqY3VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI0NTA0NjQsImV4cCI6MjAzODAyNjQ2NH0.7GKQXOQwk-VlmxtsRLFoJCYYTGiV7uYpcPBRw6i2Gwo`
+
+This is a safe to have public key since the operations against the backend will be perform on a row-level and user-based role.
+
+Setup a `src/lib/supabase.ts` file to handle the connection between the application and the Supabase backend.
+
+### Dependencies
+```bash
+npm install @supabase/supabase-js
+npm install react-native-elements @react-native-async-storage/async-storage react-native-url-polyfill
+npx expo install expo-secure-store
+```
+
 
 
 

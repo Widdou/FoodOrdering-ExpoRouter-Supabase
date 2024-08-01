@@ -7,31 +7,48 @@ import { createContext, PropsWithChildren, useEffect, useState, useContext} from
 type AuthData = {
   session: Session | null
   loading: boolean
+  profile: any
+  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthData>({
   session: null,
-  loading: true
+  loading: true,
+  profile: null,
+  isAdmin: false,
+
 })
 
 
 export default function AuthProvider({children} : PropsWithChildren) {
 
   const [session, setSession] = useState<Session | null>(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)                  // Because we're initially loading when the Provider is mounted, we have to wait for a response from the backend
 
   // Query an user's session
   useEffect(() => {
     // Fetch the user session from Supabase
     const fetchSession = async () => {
-      const {data, error} = await supabase.auth.getSession()
-      setSession(data.session)
+      const { data : {session} } = await supabase.auth.getSession()
+      setSession(session)
+      
+      if (session) {
+        // fetch profile data
+        const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+        
+        setProfile(data || null);
+      }  
+
       setLoading(false)
     }
 
-
     fetchSession()
-
+    
     // Listen to session changes from Supabase, such as Signing out
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
@@ -42,7 +59,9 @@ export default function AuthProvider({children} : PropsWithChildren) {
   
   return <AuthContext.Provider value={{
     session,
-    loading
+    loading,
+    profile,
+    isAdmin: profile?.group === 'ADMIN'
   }}>{children}</AuthContext.Provider>
 
 }

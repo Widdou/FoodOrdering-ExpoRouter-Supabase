@@ -164,9 +164,7 @@ npx expo install expo-secure-store
 ```
 
 
-## Authentication
-
-Set up the database schema based on The **User Management Starter** Template from the SQL Editor
+## Authentication with Supabase
 
 Using the supabase client we can handle authentication with their built-in Authentication service. 
 
@@ -217,9 +215,54 @@ To subscribe to session changes set this in the provider as well:
   });
 ```
 
-## Guard Route Groups
+## Guard Route Groups - Avoiding Link Navigation to users without logging in
 
 To avoid navigating straight to a link, and bypassing the authentication, our routes need to be guarded.
+
+In the `_layout.tsx` files of each group we can ask for the session state using the `useAuth` hook to check on the Auth Context.
+If the session isn't define we redirect them back to the index of the application, which will then re-redirect to the sign-in.
+
+`(users)/_layout.tsx`
+```JavaScript
+  import { useAuth } from '@/providers/AuthProvider';
+
+  export default Layout () => {
+    ...
+    const {session} = useAuth()
+
+    
+    if(!session) {
+      return <Redirect href={'/'}/>
+    }
+    ...
+  }
+```
+
+In the case of the `(admin)/_layout.tsx`, to avoid a logged user to reach it:
+```JavaScript
+
+  const {isAdmin} = useAuth()
+
+  if(!isAdmin) {
+    return <Redirect href={'/'} />
+  }
+
+```
+
+## Group Based Navigation - Create Profile Groups to the users
+
+Set up the database schema based on The **User Management Starter** Template from the SQL Editor
+
+After executing the template, we will have a new `profiles` table, that interacts with the `auth.users.id` service, a set of policies and more.
+So now, whenever a new user is created it will be also stored in the `profiles` table.
+
+We can add a column `group` to this table to assign them a role. 
+Setting its default to `'USER'` so all new users are just at that group.
+
+Inside our `AuthProvider` we now have to also get the profile data from the backend whenever the user logs in.
+
+
+
 
 
 -------------------------------------------------------------------------------

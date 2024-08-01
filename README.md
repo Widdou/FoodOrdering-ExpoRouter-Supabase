@@ -261,8 +261,26 @@ Setting its default to `'USER'` so all new users are just at that group.
 
 Inside our `AuthProvider` we now have to also get the profile data from the backend whenever the user logs in.
 
-
-
-
+Now, in the `app/index.tsx` we can have all the checks and redirect users to the rigth set of screens:
+- Unauthenticated  → `/sign-in`
+- Authenticated
+    - Admin → `/(admin)`
+    - User → `/(user)`
 
 -------------------------------------------------------------------------------
+
+# Supabase CRUD - Products
+
+Start by creating a `products` table
+With this schema:
+- id (int8)
+- created_at (timestamptz) now()
+- image (text)  NULLABLE
+- name (text)
+- price (float)
+
+With the Enable Row Level Security (RLS) option
+
+Create a new policy to allow authenticated users READ operations on the products table. 
+
+

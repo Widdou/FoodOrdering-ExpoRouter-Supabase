@@ -1,3 +1,6 @@
+
+OBS: Check the `expo-secure-store` dependency, it's breaking the Web version of the App
+
 # Food Ordering Application, with React Native Expo + Expo Router + Supabase
 
 [Tutorial de Referencia](https://www.youtube.com/watch?v=rIYzLhkG9TA)
@@ -160,7 +163,63 @@ npm install react-native-elements @react-native-async-storage/async-storage reac
 npx expo install expo-secure-store
 ```
 
+
+## Authentication
+
 Set up the database schema based on The **User Management Starter** Template from the SQL Editor
+
+Using the supabase client we can handle authentication with their built-in Authentication service. 
+
+With `supabase.auth.signUp` we can just provide the `email` and `password` values in the form to perform a registration against the `Users` table in the Supabase project's Authentication tab
+
+```JavaScript
+  import { supabase } from '@/lib/supabase'
+
+  async function signUpWithEmail() {
+    setLoading(true)
+    const {error} = await supabase.auth.signUp({email, password})
+
+    if(error) Alert.alert(error.message)
+    setLoading(false)
+  }
+```
+
+Likewise, to allow an user to login once registered, we can use `supabase.auth.signInWithPassword`
+
+```JavaScript
+  import { supabase } from '@/lib/supabase'
+
+  async function signInWithPassword() {
+    setLoading(true)
+    const {data, error} = await supabase.auth.signInWithPassword({email, password})
+
+    if(error) Alert.alert(error.message)
+
+    if(data) Alert.alert(`Successfully logged in as User: ${data.user?.email}`)
+    setLoading(false)
+  }
+```
+
+## Application Authentication Context Provider
+
+To make use of our sesion in different places, we have to wrap out applciation in our RootLayout.
+The configuration we passed to our client definition at `lib/supabase.ts` already sets it to persist and storage it, but we have to facilitate the running app to have accesss to these details.
+
+Create a `providers/AuthProvider.tsx`, which exports the `session` we could get by calling: 
+```JavaScript
+  const { data: { session } } = await supabase.auth.getSession();
+```
+
+To subscribe to session changes set this in the provider as well:
+```JavaScript
+  supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
+```
+
+## Guard Route Groups
+
+To avoid navigating straight to a link, and bypassing the authentication, our routes need to be guarded.
 
 
 -------------------------------------------------------------------------------

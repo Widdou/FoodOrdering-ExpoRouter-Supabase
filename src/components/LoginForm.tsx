@@ -16,20 +16,23 @@ export default function LoginForm({action} : LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<string | null>(null)
 
   async function signUpWithEmail() {
     setLoading(true)
     const {error} = await supabase.auth.signUp({email, password})
 
-    if(error) Alert.alert(error.message)
+    if(error) setErrors(error.message) //Alert.alert(error.message)
     setLoading(false)
   }
 
   async function signInWithPassword() {
     setLoading(true)
-    const {error} = await supabase.auth.signInWithPassword({email, password})
+    const {data, error} = await supabase.auth.signInWithPassword({email, password})
 
-    if(error) Alert.alert(error.message)
+    if(error) setErrors(error.message) // Alert.alert(error.message)
+
+    // if(data) Alert.alert(`Successfully logged in as User: ${data.user?.email}`)
     setLoading(false)
   }
 
@@ -55,11 +58,14 @@ export default function LoginForm({action} : LoginFormProps) {
         />
       </View>
 
+      <Text style={styles.errorMessage}>{errors}</Text>
+
+
       {action == 'signup' ? 
         // Sign up screen
         <>
           <Button text={loading ? 'Creating account...' : 'Create account'} onPress={() => signUpWithEmail()} disabled={loading}/>
-          <Link href='/(auth)/sign-in'><Text>Sign in</Text></Link>
+          <Link href='/sign-in'><Text>Sign in</Text></Link>
         </>
         : null
       }
@@ -68,7 +74,7 @@ export default function LoginForm({action} : LoginFormProps) {
         // Login screen
         <>
           <Button text={loading ? 'Singing in...' : 'Sign in'} onPress={() => signInWithPassword()} disabled={loading}/>
-          <Link href='/(auth)/sign-up'><Text>Create an account</Text></Link>
+          <Link href='/sign-up'><Text>Create an account</Text></Link>
         </>
         : null
       }
@@ -82,6 +88,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // backgroundColor: 'green',
     alignItems: 'center',
+    gap: 5,
   },
   formControl: {
     width: '100%',
@@ -96,5 +103,9 @@ const styles = StyleSheet.create({
   },
   label: {
     color: 'gray'
+  },
+  errorMessage: {
+    marginTop: 10,
+    color: 'red'
   }
 })

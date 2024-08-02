@@ -1,29 +1,17 @@
 import { ActivityIndicator, FlatList, View, Text } from 'react-native';
-import products from 'assets/data/products';
 import ProductListItem from '@/components/ProductListItem';
 import { Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useQuery } from '@tanstack/react-query';
+import { useProductList } from '@/api/products';
 
 export default function MenuScreen() {
 
-
-  const {data, error, isLoading} = useQuery({
-    queryKey: ['products'],
-    queryFn: async () => {
-      const {data, error} = await supabase.from('products').select('*')
-
-      if(error) {
-        throw new Error(error.message)
-      }
-
-      return data
-    }
-  })
+  const { data: products, error, isLoading } = useProductList()
 
   if(isLoading) {
-    return <ActivityIndicator/>
+    return <View style={{flex: 1, justifyContent: 'center'}}>
+        <ActivityIndicator/>
+        <Text>Loading Products...</Text>
+      </View>
   }
 
   if(error) {
@@ -35,7 +23,7 @@ export default function MenuScreen() {
       <Stack.Screen options={{title: 'Menu'}}/>
 
       <FlatList
-        data={data}
+        data={products}
         renderItem={({item}) => <ProductListItem product={item}/>}
         numColumns={2}
         contentContainerStyle={{gap: 10, padding: 10,}}

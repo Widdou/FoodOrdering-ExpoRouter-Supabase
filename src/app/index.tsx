@@ -10,9 +10,7 @@ const index = () => {
   const {session, loading, profile, isAdmin} = useAuth()
 
   if(loading) {
-    return <View>
-      <Text>Cagaste Puto, hay que cargar el AuthProvider, espera a que se monte</Text>
-    </View>//<ActivityIndicator />
+    return <ActivityIndicator />
   }
   
   if(!session) {

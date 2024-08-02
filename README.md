@@ -23,12 +23,14 @@ During the development of the application these would be nice concepts or patter
   - ORDERS (Tab): View the Active & Archieved orders; Be able to change the status of the orders `3:26:52`
 
 - Routing the UI into USERS or ADMIN screens based on the UserProfile
-
-
-
+  - Getting the Authentication Data from the backend
+  - AuthProvider, Context to access the `session` and `profile` data across the app
+  - Guard Redirect, prevent users from link-navigating with-in the app
+  - 
 
 - Supabase CRUDs
-  - Use React-Query to handle and fetch data from the backend
+  - 
+  - Use React-Query to handle and fetch data from the backend `4:26:22`
 
 - Real-Time Data
 - Payment integration (Stripe)
@@ -269,6 +271,40 @@ Now, in the `app/index.tsx` we can have all the checks and redirect users to the
 
 -------------------------------------------------------------------------------
 
+# TanStack - React Query
+
+```bash
+npm i @tanstack/react-query
+```
+
+The benefit of ReactQuery here is that it already manages the `isLoading` state, so it can be displayed on the UI.
+If any error occurs it's already safely stored into the error
+
+Also manages and optimizes the query behind the scenes.
+
+`queryKey` ensures to not double cache the request
+
+```
+  const {data, error, isLoading} = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const {data, error} = await supabase.from('products').select('*')
+
+      if(error) {
+        throw new Error(error.message)
+      }
+
+      return data
+    }
+  })
+```
+
+## Setting up a basic API Consumption
+
+Create an `api` separate folder to hold all the React Query requests, and so to separate the logic from the implementation
+
+
+
 # Supabase CRUD - Products
 
 Start by creating a `products` table
@@ -282,5 +318,6 @@ With this schema:
 With the Enable Row Level Security (RLS) option
 
 Create a new policy to allow authenticated users READ operations on the products table. 
+
 
 

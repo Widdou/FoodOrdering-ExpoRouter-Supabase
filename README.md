@@ -225,7 +225,7 @@ In the `_layout.tsx` files of each group we can ask for the session state using 
 If the session isn't define we redirect them back to the index of the application, which will then re-redirect to the sign-in.
 
 `(users)/_layout.tsx`
-```JavaScript
+```TypeScript
   import { useAuth } from '@/providers/AuthProvider';
 
   export default Layout () => {
@@ -241,7 +241,7 @@ If the session isn't define we redirect them back to the index of the applicatio
 ```
 
 In the case of the `(admin)/_layout.tsx`, to avoid a logged user to reach it:
-```JavaScript
+```TypeScript
 
   const {isAdmin} = useAuth()
 
@@ -326,4 +326,79 @@ With the Enable Row Level Security (RLS) option
 Create a new policy to allow authenticated users READ operations on the products table. 
 
 
+## Typing Supabase models
+
+You can download them from the Supabase, or generate them from the CLI
+
+It's better to use the CLI since, if any changes to the database model occur, they will be instantly deployed and update the type defitions on the client.
+
+##### Run the login command to get an access token for the CLI 
+```bash
+  npx supabase login
+```
+
+##### Generate the Database Models Types:
+```bash
+npx supabase gen types typescript --project-id your_project_id > src/database.types.ts
+```
+Running this will create a `database.types.ts` file that contains the supabase model for the database schemas.
+Describing its tables, columns, relationships, views, or functions present.
+
+Allowing to have TypeScript support while coding to check types and get intellisense suggestions.
+
+##### Supplying the types to the client
+
+`lib/supabase.ts`
+```TypeScript
+  import { Database } from '../database.types'
+
+  export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+```
+
+##### Defining Type Helpers
+
+Since the complete schema is imported into the type definition, it's better to just reference the definition with a shorthand.
+This way if it ever changes it will continue to reference the one source of truth.
+
+Type Helpers Definition:
+```TypeScript
+import { Database } from './database.types';
+
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+export type Enums<T extends keyof Database['public']['Enums']> =
+  Database['public']['Enums'][T];
+``` 
+
+The helpers allow to match the `Database` type defintions, such as:
+
+```TypeScript
+  export type Database = {
+    public: {
+      Tables: {
+        products: {
+          Row: {
+            created_at: string
+            id: number
+            image: string | null
+            name: string
+            price: number
+          }
+        }
+        ...
+      }
+      ...
+    }
+  }
+```
+
+
+Example of use:
+```TypeScript
+  type Product = Table<'products'>
+
+  type ProductListItemProps = {
+    product: Tables<'products'>;
+  };
+```
 

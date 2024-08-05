@@ -3,8 +3,10 @@ import Colors from '@/constants/Colors';
 import { Product } from '../types';
 import { Link, useSegments } from 'expo-router';
 
+import type { Tables } from '../types';
+
 type ProductListItemProps = {
-  product : Product
+  product : Tables<'products'>
 }
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'

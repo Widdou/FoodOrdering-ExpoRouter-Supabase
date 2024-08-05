@@ -1,14 +1,16 @@
 import { View, Text, StyleSheet, TextInput, Image, 
   Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, ScrollView, Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
-import React, { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import Button from '@/components/Button'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker'
 
 import { defaultPizzaImage } from './[id]'
 import Colors from '@/constants/Colors'
+import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from '@/api/products'
 
 export default function CreateProductScreen() {
 
@@ -17,23 +19,56 @@ export default function CreateProductScreen() {
   const [errors, setErrors] = useState('')
   const [image, setImage] = useState<string | null>(null)
 
-  const { id } = useLocalSearchParams()
+  const { id: idString } = useLocalSearchParams()
+  const id = parseFloat(typeof idString === 'string' ? idString : idString?.[0])
+
   const isUpdating = !!id
+
+  const {mutate: insertProduct, isPending: isPendingCreate} = useInsertProduct()
+  const {mutate: updateProduct, isPending: isPendingUpdate} = useUpdateProduct()
+  const {data: updatingProduct} = useProduct(id)
+  const {mutate: deleteProduct, } = useDeleteProduct()
+
+  // Update the Update Form with the selected product
+  useEffect(() => {
+    if(updatingProduct) {
+      setName(updatingProduct.name)
+      setPrice(updatingProduct.price.toString())
+      setImage(updatingProduct.image)
+    }
+  }, [updatingProduct])
 
   const resetFields = () => {
     setName('')
     setPrice('')
   }
 
-  const onCreate = () => {    
-    console.warn('Creating Product...', name, price)
-    // Save in Database
+  const onCreate = () => {
+
+    insertProduct(
+      { name, price: parseFloat(price), image },
+      {
+        onSuccess: () => {
+          resetFields()
+          router.back()
+          console.warn('Going back?')
+        }
+      }
+    )    
 
   }
 
   const onUpdate = () => {
-    console.warn('Updating Product...', name, price)
-    // Save in Database
+
+    updateProduct(
+      { id, name, price, image},
+      {
+        onSuccess: () => {
+          resetFields()
+          router.back()
+        }
+      }
+    )
 
   }
 
@@ -51,7 +86,12 @@ export default function CreateProductScreen() {
   }
 
   const onDelete = () => {
-    console.warn('DELETE!!!')
+    deleteProduct(id, {
+      onSuccess: () => {
+        resetFields()
+        router.replace('/(admin)')
+      }
+    })
   }
 
   const onSubmit = () => {
@@ -137,7 +177,7 @@ export default function CreateProductScreen() {
 
         <Text style={{color: 'red'}}>{errors}</Text>
 
-        <Button text={isUpdating ? 'Update' : 'Create'} onPress={onCreate}/>
+        <Button text={isUpdating ? 'Update' : 'Create'} onPress={onSubmit} disabled={isPendingCreate || isPendingUpdate}/>
         {isUpdating && <Text style={styles.textBottom} onPress={confirmDelete}>Delete Product</Text>}
         </View>
 

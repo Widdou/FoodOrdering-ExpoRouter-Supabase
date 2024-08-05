@@ -303,6 +303,12 @@ Also manages and optimizes the query behind the scenes.
 
 Create an `api` separate folder to hold all the React Query requests, and so to separate the logic from the implementation
 
+### Querying Data (useQuery)
+
+
+### Mutating Data (useMutation)
+
+const {mutate} : useMutation(fn)
 
 
 # Supabase CRUD - Products

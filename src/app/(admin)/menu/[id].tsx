@@ -1,27 +1,28 @@
 import { Link, router, Stack, useLocalSearchParams } from 'expo-router'
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable, ActivityIndicator } from 'react-native'
 
-import products from 'assets/data/products'
-import { useState } from 'react'
-
-import Button from '@/components/Button'
-import { PizzaSize } from '@/types'
-import { useCart } from '@/providers/CartProvider'
 import { FontAwesome } from '@expo/vector-icons'
+import { useProduct } from '@/api/products'
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
 export default function ProductsDetailsScreen() {
 
-  const {id} = useLocalSearchParams()
+  const {id : idString} = useLocalSearchParams()
 
-  const product = products.find((p) => p.id.toString() === id)
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
 
-  if(!product) {
-    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Stack.Screen options={{title: 'Error'}}/>
-      <Text>Product not found</Text>
-    </View>
+  const {data: product, isLoading, error} = useProduct(id)
+
+  if(isLoading) {
+    return <View style={{flex: 1, justifyContent: 'center'}}>
+        <ActivityIndicator/>
+        <Text>Loading Product Details...</Text>
+      </View>
+  }
+
+  if(error) {
+    return <Text>Faled to fetch product information</Text>
   }
 
   return (

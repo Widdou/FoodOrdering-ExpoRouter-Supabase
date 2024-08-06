@@ -3,8 +3,7 @@ import { StyleSheet, Text, View, Image, Pressable, ActivityIndicator } from 'rea
 
 import { FontAwesome } from '@expo/vector-icons'
 import { useProduct } from '@/api/products'
-
-export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
+import { defaultPizzaImage } from '@/constants/Images'
 
 export default function ProductsDetailsScreen() {
 

@@ -408,3 +408,5 @@ Create the `orders` & `order_items` tables.
 Create the RLS Policies to allow all authenticated users to perform actions.
 Schema:
 
+
+`onSuccess(data)` will contain the returned object by the `mutateFn` when doing CRUD operations with React Query

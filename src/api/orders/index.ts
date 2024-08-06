@@ -79,20 +79,24 @@ export const useInsertOrder = () => {
 
   return useMutation({
     mutationFn: async (data : TablesInsert<'orders'>) => {
-      const {error} = await supabase
+      const {data: newOrder, error} = await supabase
         .from('orders')
         .insert({...data, user_id: userId})
+        .select()
         .single()
 
       if(error) {throw new Error(error.message)}
+
+      return newOrder
     },
     async onSuccess() {
-      // Invalidate the 'products' query so it re-fetches the data after creating a new item
-      await queryClient.invalidateQueries({queryKey: ['orders', true]})
-      await queryClient.invalidateQueries({queryKey: ['orders', false]})
+      // // Invalidate the 'products' query so it re-fetches the data after creating a new item
+      // await queryClient.invalidateQueries({queryKey: ['orders', true]})
+      // await queryClient.invalidateQueries({queryKey: ['orders', false]})
+      console.warn('Order Checked out.')
     },
     onError(error) {
-      console.log(error)
+      console.log('Error Inserting the Order:', error)
     }
   })
 }

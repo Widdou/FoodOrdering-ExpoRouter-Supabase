@@ -40,7 +40,7 @@ export default function ProductsDetailsScreen() {
       </View>
   }
 
-  if(error) {
+  if(error || !product) {
     return <Text>Faled to fetch product information</Text>
   }
 

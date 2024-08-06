@@ -395,10 +395,16 @@ The helpers allow to match the `Database` type defintions, such as:
 
 Example of use:
 ```TypeScript
-  type Product = Table<'products'>
+  type Product = Tables<'products'>
 
   type ProductListItemProps = {
     product: Tables<'products'>;
   };
 ```
+
+-------------------------------------------------------------------------------
+
+Create the `orders` & `order_items` tables. 
+Create the RLS Policies to allow all authenticated users to perform actions.
+Schema:
 

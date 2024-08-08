@@ -74,7 +74,7 @@ const OrdersStatusButtons = ({order} : OrdersStatusButtonsProps) => {
     {OrderStatusList.map((status) => (
       <Pressable
         key={status}
-        onPress={() => {updateOrderStatus(status); setStatusSelected(status)}}
+        onPress={() => updateOrderStatus(status)}
         style={{
           borderColor: Colors.light.tint,
           borderWidth: 1,

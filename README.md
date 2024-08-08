@@ -506,8 +506,57 @@ For this to happen first enable the `Real Time` updates in a Table that you need
 
 What this does is broadcast changes to the authorized subscribers to receive them.
 
+With the Supabase API _(It's quickly available from the Table Editor view, with its snippets)_ you can subscribe from the application to the changes.
+
+In the case of this application, we want to subscribe to Order changes, so we will implement it at the Orders tab index. `(admin)/orders/list/index.tsx`
+
+```TypeScript
+  const queryClient = useClientQuery()
+
+  // Subscribe to ORDERS table change events in Real-Time
+  useEffect(() => {
+    const ordersSubscription = supabase.channel('custom-insert-channel')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'orders' },
+      (payload) => {
+        queryClient.invalidateQueries({queryKey: ['orders']}) // This will force the queries with key 'orders' to re-run
+      }
+    )
+    .subscribe()
+  }, [])
+```
+
+The idea is to subscribe to them as soon as the screen mounts, so for that we will use an `useEffect()` hook
+This way what we can do to refresh data within the application is to use the TanStack React Query functionalities, to invalidate previous queries.
+
+That will force the queries to re-run by observing the changes subscribed here.
+
+Get the `useQueryClient()` hook to run when a new payload is received and invalidate the queries.
+The approach with ReactQuery saves us from having to store the `payload` into a state and manually updating everywhere the statuses.
+Here the payload only gets the new information, while invalidating the queries will re-fetch all new information.
+
+OBS: Whenever we're subscribing to changes, we also have to **UNSUBSCRIBE** from them when we don't need it anymore.
+Cleanup function that will unsubscribe from the real-time channel when the component using this hook unmounts. 
+This prevents memory leaks and ensures that you don’t keep receiving updates for a component that’s no longer in the DOM.
+```TypeScript
+    const ordersSubscription = supabase.channel('custom-insert-channel')
+      ...
+      ...
+
+    return ordersSubscription.unsubscribe() // Clean-up Function
+```
+
+### Subscriptions Architecture
+
+To better organize the Subscriptions, store this snippet in a `api/orders/subscriptions.ts` file as a custom hook.
 
 
+
+
+-------------------------------------------------------------------------------
+
+# Stripe - Payments Integration
 
 
 

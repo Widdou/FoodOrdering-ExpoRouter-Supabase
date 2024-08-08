@@ -1,17 +1,12 @@
-import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 
 import OrderItemListItem from '@/components/OrderItemListItem';
 import OrderListItem from '@/components/OrderListItem';
 
 import { Stack, useLocalSearchParams } from 'expo-router'
-import { useOrders } from '@/providers/OrderProvider'
 import { useOrderDetails } from '@/api/orders';
-import { useOrderItemsDetails } from '@/api/order-items';
-
-type OrderDetailsScreenParams = {
-  id: string
-}
+import { useUpdateOrderSubscription } from '@/api/orders/subscriptions';
 
 
 export default function OrderDetailsScreen() {
@@ -19,6 +14,8 @@ export default function OrderDetailsScreen() {
   const id = Number(typeof idString === 'string' ?idString : idString[0])
 
   const {data: order, error, isLoading} = useOrderDetails(id)
+
+  useUpdateOrderSubscription(id)
   
   if(isLoading) return <ActivityIndicator/>
 

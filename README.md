@@ -501,6 +501,19 @@ On the `OrderItemListItem.tsx` component that displays the OrderItem information
 
 `5:50:00`
 
+```
+So far, our data is being fetched when we navigate to a screen. However, if the items are being updated in the database, we won’t know it until we refresh the application. 
+
+Sometimes, it’s important to update the user as soon as changes happen. 
+
+For that, we have subscriptions wich allows us to subscribe to data updates, and when particular events happen, such as a new item being added, updated, deleted, etc, we update the UI of our app to reflect the updates.
+
+In this lesson we will listen to 2 events:
+
+- On admin side, as soon as a new order is created in the database, we will display it in the list
+- On user side, when order status updates, we need to update the ui
+```
+
 To be able to get data refreshed when it changes without needing for it to be reloading the screen or application.
 For this to happen first enable the `Real Time` updates in a Table that you need it.
 
@@ -550,6 +563,15 @@ This prevents memory leaks and ensures that you don’t keep receiving updates f
 ### Subscriptions Architecture
 
 To better organize the Subscriptions, store this snippet in a `api/orders/subscriptions.ts` file as a custom hook.
+
+ * This custom hook subscribes to real-time changes (insertions) in the orders table in your Supabase database. 
+ * When a new order is inserted, it logs the change and invalidates the related React Query cache, triggering a refetch to update the data. 
+ * The subscription is cleaned up when the component unmounts to prevent memory leaks.
+
+
+-------------------------------------------------------------------------------
+
+# Storage - Uploading and Rendering Images to a Supabase Bucket
 
 
 

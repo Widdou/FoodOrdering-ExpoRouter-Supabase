@@ -9,6 +9,7 @@ import { Order, OrderStatusList } from '@/types';
 import Colors from '@/constants/Colors';
 import { useOrderDetails, useUpdateOrder } from '@/api/orders';
 import { Tables } from '@/database.types';
+import { useUpdateOrderSubscription } from '@/api/orders/subscriptions';
 
 export default function OrderDetailsScreen() {
 
@@ -16,6 +17,8 @@ export default function OrderDetailsScreen() {
   const id = Number(typeof idString === 'string' ?idString : idString[0])
 
   const {data: order, error, isLoading} = useOrderDetails(id)
+  
+  useUpdateOrderSubscription(id)
   
   if(isLoading) return <ActivityIndicator/>
 
@@ -31,13 +34,15 @@ export default function OrderDetailsScreen() {
 
       <OrderListItem order={order}/>
 
+      <OrdersStatusButtons order={order}/>
+
       <Text>Items:</Text>
 
       <FlatList
         data={order.order_items}
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
-        ListFooterComponent={() => <OrdersStatusButtons order={order}/>}
+        // ListFooterComponent={() => <OrdersStatusButtons order={order}/>}
       />
     </View>
   )

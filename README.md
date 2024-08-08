@@ -31,9 +31,26 @@ During the development of the application these would be nice concepts or patter
 - Supabase CRUDs
   - 
   - Use React-Query to handle and fetch data from the backend `4:26:22`
+  - Propagate a React-Query update after changing data (Usage of queryKey & InvalidateQuery)
+  - 
+  - Insert Orders at Checkout `5:23:27`
+  - Linking Order Items with an Order `5:32:46`
+  - Joining Data from Tables on a Request - Get the Products & Order items of and Order `5:43:33`
+  - 
 
 - Real-Time Data
+  - Subscriptions
+  - 
+
+- Storage with Supabase
+
 - Payment integration (Stripe)
+  - Setup
+  - Payment Intent Creation
+  - 
+
+- EAS (Expo Application Services) `7:35:00`
+
 - Remote Push Notifications
 
 -------------------------------------------------------------------------------
@@ -410,3 +427,95 @@ Schema:
 
 
 `onSuccess(data)` will contain the returned object by the `mutateFn` when doing CRUD operations with React Query
+
+### Creating Orders & Storing Order Items
+
+Flow:
+1. User selects products on the menu
+2. Adds them to the
+
+
+## Sorting Query Orders by Creation
+
+Bring the newest orders first
+```TypeScript
+  const {data, error} = await supabase
+    .from('orders')
+    .select('*')
+    .in('status', statuses)
+    .order('created_at', { ascending: false})
+```
+
+## Joining Data from Tables on a Request - Get the Products & Order items of and Order 
+
+`5:43:33`
+You can make a JOIN request by passing modifierst to the `.select()` function
+
+In this case we want to get the Orders, but also to contain their OrderItems and along those the Products information for eact order item.
+To accomplish that we would have to query the information like this:
+
+```TypeScript
+  const {data, error} = await supabse
+    .from('orders')
+    .select('*, order_items(*, products(*))')
+    .eq()
+    .single()
+```
+
+`.select('*, order_items(*, products(*))')`
+This means to join the `ORDERS` table with `ORDER_ITEMS` and it with `PRODUCTS`
+
+Allowing to return an object with this shape:
+```TypeScript
+const data: {
+    created_at: string;
+    id: number;
+    status: string;
+    total: number | null;
+    user_id: string | null;
+    order_items: {
+        created_at: string;
+        id: number;
+        order_id: number | null;
+        product_id: number | null;
+        quantity: number | null;
+        size: string | null;
+        products: {
+            ...;
+        } | null;
+    }[];
+}[]
+```
+
+On the `OrderItemListItem.tsx` component that displays the OrderItem information at the Order Details view, the prop type can be updated this way to allow the joined data
+
+```TypeScript
+  type OrderItemListItemProps = {
+    item: { products: Tables<'products'> } & Tables<'orders'> 
+  };
+```
+
+-------------------------------------------------------------------------------
+
+# Real-Time Data Updates on Table changes with Supabase
+
+`5:50:00`
+
+To be able to get data refreshed when it changes without needing for it to be reloading the screen or application.
+For this to happen first enable the `Real Time` updates in a Table that you need it.
+
+What this does is broadcast changes to the authorized subscribers to receive them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

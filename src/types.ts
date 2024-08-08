@@ -8,6 +8,9 @@ export type Tables<T extends keyof Database['public']['Tables']> =
 export type TablesInsert<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Insert'];      // The definition to INSERT/CREATE new rows in a Table
   
+export type TablesUpdate<T extends keyof Database['public']['Tables']> =
+Database['public']['Tables'][T]['Update'];      // The definition to UPDATE rows in a Table
+
 export type Enums<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T];
 
@@ -40,15 +43,17 @@ export const OrderStatusList: OrderStatus[] = [
 
 export type OrderStatus = 'New' | 'Cooking' | 'Delivering' | 'Delivered';
 
-export type Order = {
-  id: number;
-  created_at: string;
-  total: number;
-  user_id: string;
-  status: OrderStatus;
+// export type Order = {
+//   id: number;
+//   created_at: string;
+//   total: number;
+//   user_id: string;
+//   status: OrderStatus;
 
-  order_items?: OrderItem[];
-};
+//   order_items?: OrderItem[];
+// };
+
+export type Order = Tables<'orders'>
 
 // export type Order = Tables<'orders'>
 // export type OrderItem = Tables<'order_items'>

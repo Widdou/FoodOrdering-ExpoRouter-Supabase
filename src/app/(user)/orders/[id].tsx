@@ -7,6 +7,7 @@ import OrderListItem from '@/components/OrderListItem';
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useOrders } from '@/providers/OrderProvider'
 import { useOrderDetails } from '@/api/orders';
+import { useOrderItemsDetails } from '@/api/order-items';
 
 type OrderDetailsScreenParams = {
   id: string
@@ -16,6 +17,7 @@ type OrderDetailsScreenParams = {
 export default function OrderDetailsScreen() {
   const {id : idString} = useLocalSearchParams()
   const id = Number(typeof idString === 'string' ?idString : idString[0])
+
   const {data: order, error, isLoading} = useOrderDetails(id)
   
   if(isLoading) return <ActivityIndicator/>
@@ -34,11 +36,16 @@ export default function OrderDetailsScreen() {
 
       <Text>Items:</Text>
 
-      <FlatList
-        data={order.order_items}
-        renderItem={({ item }) => <OrderItemListItem item={item} />}
-        contentContainerStyle={{ gap: 10 }}
-      />
+      {!order || order.order_items.length == 0 ? 
+        <Text>Order Items not found!</Text>
+      :
+        <FlatList
+          data={order.order_items}
+          renderItem={({ item }) => <OrderItemListItem item={item} />}
+          contentContainerStyle={{ gap: 10 }}
+        />        
+      }
+
     </View>
   )
 }

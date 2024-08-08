@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet, Image, Pressable, ActivityIndicator } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 
 import OrderItemListItem from '@/components/OrderItemListItem';
 import OrderListItem from '@/components/OrderListItem';
@@ -7,12 +7,14 @@ import OrderListItem from '@/components/OrderListItem';
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { Order, OrderStatusList } from '@/types';
 import Colors from '@/constants/Colors';
-import { useOrderDetails } from '@/api/orders';
+import { useOrderDetails, useUpdateOrder } from '@/api/orders';
+import { Tables } from '@/database.types';
 
 export default function OrderDetailsScreen() {
 
   const {id : idString} = useLocalSearchParams()
   const id = Number(typeof idString === 'string' ?idString : idString[0])
+
   const {data: order, error, isLoading} = useOrderDetails(id)
   
   if(isLoading) return <ActivityIndicator/>
@@ -50,18 +52,29 @@ const styles = StyleSheet.create({
   },
 })
 
+
+
+
 type OrdersStatusButtonsProps = {
-  order : Order
+  order : Tables<'orders'>
 }
 
 const OrdersStatusButtons = ({order} : OrdersStatusButtonsProps) => {
+
+  const {mutate: updateOrder} = useUpdateOrder()
+
+  const updateOrderStatus = (status : string) => {
+    updateOrder({id: order.id, data: {status}})
+  }
+
+
   return <>
   <Text style={{ fontWeight: 'bold' }}>Status</Text>
   <View style={{ flexDirection: 'row', gap: 5 }}>
     {OrderStatusList.map((status) => (
       <Pressable
         key={status}
-        onPress={() => console.warn('Update status')}
+        onPress={() => {updateOrderStatus(status); setStatusSelected(status)}}
         style={{
           borderColor: Colors.light.tint,
           borderWidth: 1,

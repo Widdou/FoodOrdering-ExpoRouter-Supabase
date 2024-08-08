@@ -1,9 +1,9 @@
-import { View, Text, SafeAreaView, Platform, FlatList } from 'react-native'
+import { View, Text, SafeAreaView, Platform, FlatList, ActivityIndicator } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useCart } from '@/providers/CartProvider'
 import CartListItem from '@/components/CartListItem'
 import Button from '@/components/Button'
-import { router } from 'expo-router'
+import { Redirect, router } from 'expo-router'
 import { useOrders } from '@/providers/OrderProvider'
 
 export default function CartScreen() {
@@ -11,11 +11,10 @@ export default function CartScreen() {
   const {items, total, checkout} = useCart()
   // const {createOrder, addOrder} = useOrders()
 
-  // Don't open cart if empty
-  if(items.length == 0) {
-    router.back() 
-    return
-  }
+  // Don't open cart if empty - HAS A BUG
+  // if(items.length == 0) {    
+  //   return <Redirect href={'/menu'}/> //router.back()  //<ActivityIndicator/>
+  // }
 
   return (
     <SafeAreaView style={{backgroundColor: 'ivory', flex: 1}}>

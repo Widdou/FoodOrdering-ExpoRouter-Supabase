@@ -1,4 +1,4 @@
-import { TablesInsert } from "@/database.types"
+import { TablesInsert, TablesUpdate } from "@/database.types"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/providers/AuthProvider"
 import { Order } from "@/types"
@@ -19,8 +19,9 @@ export const useAdminOrderList = ({archived = false}) => {
     queryFn: async () => {
       const {data, error} = await supabase
         .from('orders')
-        .select('*')
+        .select('*, order_items(*, products(*))')
         .in('status', statuses)
+        .order('created_at', { ascending: false})
 
       if(error) { throw new Error(error.message) }
 
@@ -45,6 +46,7 @@ export const useMyOrderList = () => {
         .from('orders')
         .select('*')
         .eq('user_id', id)
+        .order('created_at', { ascending: false})
 
       if(error) {throw new Error(error.message)}
 
@@ -60,7 +62,7 @@ export const useOrderDetails = (id: number) => {
     queryFn: async () => {
       const {data: details, error} = await supabase
         .from('orders')
-        .select()
+        .select('*, order_items(*, products(*))')
         .eq('id', id)
         .single()
 
@@ -91,12 +93,42 @@ export const useInsertOrder = () => {
     },
     async onSuccess() {
       // // Invalidate the 'products' query so it re-fetches the data after creating a new item
-      // await queryClient.invalidateQueries({queryKey: ['orders', true]})
+      await queryClient.invalidateQueries({queryKey: ['orders']})
       // await queryClient.invalidateQueries({queryKey: ['orders', false]})
       console.warn('Order Checked out.')
     },
     onError(error) {
       console.log('Error Inserting the Order:', error)
+    }
+  })
+}
+
+
+
+export const useUpdateOrder = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (
+      {id, data} : {id: number, data: TablesUpdate<'orders'>}
+    ) => {
+      const {data: orderUpdated, error} = await supabase
+        .from('orders')
+        .update(data)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if(error) {throw new Error(error.message)}
+
+      return orderUpdated
+    },
+    onSuccess: async (_, data) => {
+      await queryClient.invalidateQueries({queryKey: ['orders']})
+      await queryClient.invalidateQueries({queryKey: ['orders', data.id]})
+    },
+    onError(error) {
+      console.error('Error Updating the Order:', error)
     }
   })
 }

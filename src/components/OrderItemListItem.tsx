@@ -1,25 +1,28 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import Colors from '../constants/Colors';
-import { OrderItem } from '../types';
 import { defaultPizzaImage } from './ProductListItem';
+import { Tables } from '@/database.types';
+
+type OrderItem = Tables<'order_items'>
+type Product = Tables<'products'> | null
 
 type OrderItemListItemProps = {
-  item: OrderItem;
+  item : OrderItem & { products : Product }
 };
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: item.products.image || defaultPizzaImage }}
+        source={{ uri: item.products!.image || defaultPizzaImage }}
         style={styles.image}
         resizeMode="contain"
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{item.products.name}</Text>
+        <Text style={styles.title}>{item.products!.name}</Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>${item.products.price.toFixed(2)}</Text>
+          <Text style={styles.price}>${item.products!.price.toFixed(2)}</Text>
           <Text>Size: {item.size}</Text>
         </View>
       </View>
@@ -59,6 +62,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
     marginVertical: 10,
+    paddingRight: 10,
   },
   quantity: {
     fontWeight: '500',

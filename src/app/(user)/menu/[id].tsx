@@ -7,6 +7,7 @@ import Button from '@/components/Button'
 import { PizzaSize } from '@/types'
 import { useCart } from '@/providers/CartProvider'
 import { useProduct } from '@/api/products'
+import RemoteImage from '@/components/RemoteImage'
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -50,7 +51,14 @@ export default function ProductsDetailsScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{title: product.name}}/>
       
-      <Image source={{uri: product?.image || defaultPizzaImage}} style={styles.image}/>
+      {/* <Image source={{uri: product?.image || defaultPizzaImage}} style={styles.image}/> */}
+      
+      <RemoteImage
+          fallback={defaultPizzaImage}
+          path={product.image}
+          style={styles.image}
+          resizeMode="contain"
+        />
 
       <Text style={styles.name}>{product.name}</Text>
       <Text style={styles.price}>$ {price}</Text>

@@ -5,12 +5,20 @@ import { View, Text, StyleSheet, TextInput, Image,
 } from 'react-native'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import Button from '@/components/Button'
+
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
+import { randomUUID } from 'expo-crypto'
 
-import { defaultPizzaImage } from './[id]'
+import { supabase } from '@/lib/supabase'
+import { decode } from 'base64-arraybuffer'
+
+import { defaultPizzaImage } from '@/constants/Images'
 import Colors from '@/constants/Colors'
 import { useDeleteProduct, useInsertProduct, useProduct, useUpdateProduct } from '@/api/products'
+import { Product } from '@/types'
+import { TablesInsert } from '@/database.types'
 
 export default function CreateProductScreen() {
 
@@ -43,32 +51,42 @@ export default function CreateProductScreen() {
     setPrice('')
   }
 
-  const onCreate = () => {
+  const onCreate = async () => {
 
-    insertProduct(
-      { name, price: parseFloat(price), image },
-      {
-        onSuccess: () => {
-          resetFields()
-          router.back()
-          console.warn('Going back?')
-        }
+    if(!validateInput()) {return}
+
+    const imagePath = await uploadImage()
+
+    const newProduct: TablesInsert<'products'> = { name, price: parseFloat(price) }
+
+    if(imagePath) { newProduct.image = imagePath }
+
+    insertProduct(newProduct, {
+      onSuccess: () => {
+        resetFields()
+        router.back()
+        console.warn('Going back?')
       }
-    )    
+    })
 
   }
 
-  const onUpdate = () => {
+  const onUpdate = async () => {
+ 
+    if(!validateInput()) {return}
 
-    updateProduct(
-      { id, name, price, image},
-      {
-        onSuccess: () => {
-          resetFields()
-          router.back()
-        }
+    const imagePath = await uploadImage()
+
+    const updatedProduct: TablesInsert<'products'> = { name, price: parseFloat(price) }
+
+    if(imagePath) { updatedProduct.image = imagePath }
+
+    updateProduct(updatedProduct, {
+      onSuccess: () => {
+        resetFields()
+        router.back()
       }
-    )
+    })
 
   }
 
@@ -104,7 +122,7 @@ export default function CreateProductScreen() {
       onCreate()
     }
     
-    resetFields()
+    // resetFields()
   }
 
   const validateInput = () => {
@@ -142,6 +160,34 @@ export default function CreateProductScreen() {
     }
   };
 
+
+  // TO-DO: Move to some lib/utils.ts
+  const uploadImage = async () => {
+    if (!image?.startsWith('file://')) {
+      return;
+    }
+  
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: 'base64',
+    });
+    
+    const filePath = `${randomUUID()}.png`;
+    const contentType = 'image/png';
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, decode(base64), { contentType });
+  
+    if (data) {
+      return data.path;
+    }
+
+    if(error) {return console.error(`Couldn't upload image. ${error.message}`)}
+  };
+
+
+
+
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -150,35 +196,35 @@ export default function CreateProductScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
         <View style={styles.innertContent}>
-        <Stack.Screen options={{
-          title: isUpdating ? 'Edit Product Details' : 'Create New Product',
-          headerBackTitle: 'Back'
-        }}/>
+          <Stack.Screen options={{
+            title: isUpdating ? 'Edit Product Details' : 'Create New Product',
+            headerBackTitle: 'Back'
+          }}/>
 
-        <Image source={{uri: image || defaultPizzaImage}} style={styles.image}/>
-        <Text onPress={pickImageAsync} style={styles.textBottom}>Select Image</Text>
+          <Image source={{uri: image || defaultPizzaImage}} style={styles.image}/>
+          <Text onPress={pickImageAsync} style={styles.textBottom}>Select Image</Text>
 
-        <Text style={styles.label}>Name: </Text>
-        <TextInput 
-          placeholder='Name of Product'
-          style={styles.input} 
-          onChangeText={setName}
-          value={name}
-        />
+          <Text style={styles.label}>Name: </Text>
+          <TextInput 
+            placeholder='Name of Product'
+            style={styles.input} 
+            onChangeText={setName}
+            value={name}
+          />
 
-        <Text style={styles.label}>Price: ($)</Text>
-        <TextInput 
-          placeholder='9.99' 
-          style={styles.input} 
-          keyboardType='numeric'
-          onChangeText={setPrice}
-          value={price}
-        />
+          <Text style={styles.label}>Price: ($)</Text>
+          <TextInput 
+            placeholder='9.99' 
+            style={styles.input} 
+            keyboardType='numeric'
+            onChangeText={setPrice}
+            value={price}
+          />
 
-        <Text style={{color: 'red'}}>{errors}</Text>
+          <Text style={{color: 'red'}}>{errors}</Text>
 
-        <Button text={isUpdating ? 'Update' : 'Create'} onPress={onSubmit} disabled={isPendingCreate || isPendingUpdate}/>
-        {isUpdating && <Text style={styles.textBottom} onPress={confirmDelete}>Delete Product</Text>}
+          <Button text={isUpdating ? 'Update' : 'Create'} onPress={onSubmit} disabled={isPendingCreate || isPendingUpdate}/>
+          {isUpdating && <Text style={styles.textBottom} onPress={confirmDelete}>Delete Product</Text>}
         </View>
 
       </TouchableWithoutFeedback>
@@ -219,9 +265,3 @@ const styles = StyleSheet.create({
     marginVertical: 10
   }
 })
-
-const DismissKeyboard = ({ children } : PropsWithChildren) => (
-  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-    {children}
-  </TouchableWithoutFeedback>
-  );

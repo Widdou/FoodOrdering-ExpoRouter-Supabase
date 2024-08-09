@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Image, Pressable, ActivityIndicator } from 'rea
 import { FontAwesome } from '@expo/vector-icons'
 import { useProduct } from '@/api/products'
 import { defaultPizzaImage } from '@/constants/Images'
+import RemoteImage from '@/components/RemoteImage'
 
 export default function ProductsDetailsScreen() {
 
@@ -45,7 +46,14 @@ export default function ProductsDetailsScreen() {
           ),
       }}/>
       
-      <Image source={{uri: product?.image || defaultPizzaImage}} style={styles.image}/>
+      {/* <Image source={{uri: product?.image || defaultPizzaImage}} style={styles.image}/> */}
+
+      <RemoteImage
+          fallback={defaultPizzaImage}
+          path={product.image}
+          style={styles.image}
+          resizeMode="contain"
+        />
 
       <Text>Nombre:</Text>
       <Text style={styles.name}>{product.name}</Text>

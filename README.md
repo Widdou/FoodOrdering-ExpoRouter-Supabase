@@ -65,6 +65,8 @@ Having a Task Board on Notion to break down the tasks on each domain phase (Fron
 - [Day.js (Relative Time)](https://day.js.org/docs/en/plugin/relative-time)
 - [Top Navigator Material UI](https://reactnavigation.org/docs/material-top-tab-navigator/) 
 - React Query 
+- Expo Image Picker
+- Expo File System
 
 ```shell
 npx expo install expo-crypto
@@ -74,13 +76,16 @@ npx expo install dayjs
 npm install @react-navigation/material-top-tabs react-native-tab-view
 npx expo install react-native-pager-view
 
-
+// Fetching Data, Invalidating Queries
 npx expo install react-query
+
+// Selecting, Uploading and Downloading Pictures
+npx expo install expo-file-system base64-arraybuffer
 ```
 
 -------------------------------------------------------------------------------
 
-Expo Image Picker
+Expo Image Picker + Expo File System
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -573,7 +578,78 @@ To better organize the Subscriptions, store this snippet in a `api/orders/subscr
 
 # Storage - Uploading and Rendering Images to a Supabase Bucket
 
+Start by creating a space to store these images. That will be a Supabase Bucket.
+Create a `product-images` new bucket, it can be set as `public` or `private`.
+If set to `private` setup the policies to allow the authenticated users to INSERT & SELECT from it.
 
+<details>
+  <summary>Configuration on the Supabase Policy Panel:</summary>
+  
+  * Create a new Policy: `Allow authenticated users to read and insert product images`
+  * Set the allowed operations to: `SELECT` & `INSERT`
+  * Target roles: `Authenticated`
+  * Policy definition: `bucket_id = 'product_images'`
+
+</details>
+
+With `Expo File System` plugin we can handle the interaction with the files in the user device.
+
+```bash
+npx expo install expo-file-system base64-arraybuffer
+```
+
+## Uploading Images
+
+
+
+```TypeScript
+
+  import { supabase } from '@/lib/supabase'
+  import { decode } from 'base64-arraybuffer'
+
+  import * as FileSystem from 'expo-file-system'
+  import { randomUUID } from 'expo-crypto'
+
+  const uploadImage = async () => {
+    if (!image?.startsWith('file://')) {
+      return;
+    }
+  
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: 'base64',
+    });
+    
+    const filePath = `${randomUUID()}.png`;
+    const contentType = 'image/png';
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, decode(base64), { contentType });
+  
+    if (data) {
+      return data.path;
+    }
+
+    if(error) {return console.error(`Couldn't upload image. ${error.message}`)}
+  };
+```
+
+## Downloading Images from the Storage
+
+The images will properly be uploaded to the storage, but to have them be rendered in the application it's necessary to download them as well
+
+
+## Rendering Images
+
+With the ``<RemoteImage/>`` component we can handle the request of an image file from its URI string, and if not found simply display the fallback image.
+
+```TypeScript
+  <RemoteImage
+    fallback={defaultPizzaImage}
+    path={product.image}
+    style={styles.image}
+    resizeMode="contain"
+  />
+```
 
 
 -------------------------------------------------------------------------------

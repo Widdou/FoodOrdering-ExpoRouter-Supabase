@@ -299,6 +299,47 @@ Now, in the `app/index.tsx` we can have all the checks and redirect users to the
 npm i @tanstack/react-query
 ```
 
+
+## Wrapping the App with the Context Provider
+
+To utilize (Tan Stack) React-Query within our application it's necessary to wrap it with their context implementation:
+
+`/providers/QueryProvider.tsx`
+```TypeScript
+  import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+  import { PropsWithChildren } from 'react';
+
+  const client = new QueryClient();
+
+  export default function QueryProvider({ children }: PropsWithChildren) {
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  }
+```
+
+`src/app/_layout.tsx`
+```TypeScript
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <AuthProvider>
+        <QueryProvider>
+          <OrderProvider>
+            <CartProvider>
+              <Stack>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                <Stack.Screen name="(user)" options={{ headerShown: false }} />
+                <Stack.Screen name="cart" options={{ presentation: 'modal', headerShown: false }} />
+              </Stack>
+            </CartProvider>
+          </OrderProvider>
+        </QueryProvider>
+      </AuthProvider>
+    </ThemeProvider>
+```
+
+
+
+## Usage
+
 The benefit of ReactQuery here is that it already manages the `isLoading` state, so it can be displayed on the UI.
 If any error occurs it's already safely stored into the error
 

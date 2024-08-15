@@ -767,7 +767,20 @@ npx supabase status
 ```
 
 
+### Reset the DB
 
+```shell
+npx supabase db reset
+```
+
+For some reason, the Trigger to run the function `handle_new_user` wasn't pulled when bringing the remote schema.
+So we have to add this to the migration SQL script:
+```SQL
+-- trigger the function every time a user is created
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
 
 
 

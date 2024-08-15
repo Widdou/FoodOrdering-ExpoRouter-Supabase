@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { Tables } from "@/types";
 import { Session } from "@supabase/supabase-js";
 import { createContext, PropsWithChildren, useEffect, useState, useContext} from "react";
 
@@ -7,7 +8,7 @@ import { createContext, PropsWithChildren, useEffect, useState, useContext} from
 type AuthData = {
   session: Session | null
   loading: boolean
-  profile: any
+  profile: Tables<'profiles'> | null
   isAdmin: boolean
 }
 
@@ -23,7 +24,7 @@ const AuthContext = createContext<AuthData>({
 export default function AuthProvider({children} : PropsWithChildren) {
 
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState(null)
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null)
   const [loading, setLoading] = useState(true)                  // Because we're initially loading when the Provider is mounted, we have to wait for a response from the backend
 
   // Query an user's session
@@ -36,10 +37,10 @@ export default function AuthProvider({children} : PropsWithChildren) {
       if (session) {
         // fetch profile data
         const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
         
         setProfile(data || null);
       }  

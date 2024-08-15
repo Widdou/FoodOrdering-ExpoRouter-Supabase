@@ -17,6 +17,8 @@ const index = () => {
     return <Redirect href={'/sign-in'}/>
   }
 
+  Alert.alert(`is Admin? ${isAdmin}`)
+  
   if(!isAdmin) {
     return <Redirect href={'/(user)'}/>
   }

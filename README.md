@@ -691,6 +691,94 @@ With the ``<RemoteImage/>`` component we can handle the request of an image file
     resizeMode="contain"
   />
 ```
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+
+# Supabase CLI - Local Development
+
+Since Supabase is open-source you can set it up and host it locally.
+https://supabase.com/docs/guides/cli/local-development
+
+<summary>
+<details>Why develop locally?</details>
+
+* Faster Development: 
+  Developing locally allows you to work without any network latency or internet disruptions.
+
+* Easier Collaboration: 
+  Developing locally can make it easier to collaborate with others on the same project.
+
+* Cost-Effective: 
+  Supabase provides a generous Free Plan and gives you two free projects to get started. But what if you need more than two? When you develop locally, you can spin up unlimited local projects and link them with live projects when you're ready to launch.
+
+* Configuration in code: 
+  If you directly change your tables via the Dashboard, none of that gets captured in code. If you follow these local development practices, you'll store all of your table schemas in code.
+
+* Work offline: 
+  Need to work from a train? A plane? An automobile? No problem. Developing your project locally allows you to work offline.
+
+</summary>
+
+### Login into Supabase from the CLI
+```shell
+npx supabase login
+```
+Will prompt a browser to input the credentials and go back to the terminal
+
+### Install the Supabase CLI to manage the local instance.
+
+To run locally the Supabase enviroment needs Docker installed.
+
+```shell
+npx supabase init
+```
+This will add a `supabase` folder to the root folder, which will contain the local Supabase environment.
+
+### Bring the schemas and data from the cloud.
+```shell
+npx supabase link --project-ref
+```
+To bring the existing schema in the Supabase remote environment using `link` you can specify project to work with.
+The `project-ref` can be found at the dashboard/project-settings
+
+It will prompt the database password (can be resetted if forgotten at: `Project Settings/Database`)
+
+```shell
+npx supabase db pull
+```
+This will pull all the changes done to the database, just like when pulling from a remote repository on git.
+It will create a new .sql file at `supabase/migrations/` containing the remote schema.
+
+
+
+
+
+### Run a Dokcer Image to contain the development environment.
+
+```shell
+npx supabase start
+```
+
+Will download the image and start a Docker container to host and run the Supabase local environment for development.
+
+```shell
+npx supabase status
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -------------------------------------------------------------------------------
